@@ -41,11 +41,11 @@ public class PlayerController : MonoBehaviour
     public static string gameState = "playing";
 
 
-    //Animator animator;
-    //public string stopAnime = "PlayerStopAnime";
-    //public string missAnime = "PlayerMissAnime";
-    //string nowAnime = "";
-    //string oldAnime = "";
+    public Animator animator;
+    public string stopAnime = "NomarlPlayer";
+    public string BigAnime = "BigPlayer";
+    string nowAnime = "";
+    string oldAnime = "";
 
     [SerializeField] TrailRenderer tr;
 
@@ -56,9 +56,9 @@ public class PlayerController : MonoBehaviour
     {
         rbody = this.GetComponent<Rigidbody2D>();
         boxCol = GetComponent<BoxCollider2D>();
-        //animator = GetComponent<Animator>();
-        //nowAnime = stopAnime;
-        //oldAnime = stopAnime;
+        animator = GetComponent<Animator>();
+        nowAnime = stopAnime;
+        oldAnime = stopAnime;
         NormalScale = this.transform.localScale.x;
         Scale_X = this.transform.localScale.x;
         gameState = "playing";
@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.DownArrow) &&onGround)
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             if (BigMode)
             {
@@ -210,11 +210,11 @@ public class PlayerController : MonoBehaviour
 
         rbody.velocity = new Vector2(axisX * speed, rbody.velocity.y);
 
-        //if (nowAnime != oldAnime) // アニメーションの変更を反映(ミスとクリア以外)
-        //{
-        //    oldAnime = nowAnime;
-        //animator.Play(nowAnime);
-        //}
+        if (nowAnime != oldAnime) // アニメーションの変更を反映(ミスとクリア以外)
+        {
+            oldAnime = nowAnime;
+        animator.Play(nowAnime);
+        }
     }
 
 
@@ -281,6 +281,7 @@ public class PlayerController : MonoBehaviour
                 Scale_X *= BigScale;
                 Scale = NormalScale * BigScale;
                 transform.DOScale(new Vector2(Direct_x * Scale, Scale), 0.3f);
+                nowAnime = "BigPlayer";
                 BigMode = true;
             }
         }
@@ -300,6 +301,7 @@ public class PlayerController : MonoBehaviour
                 Scale_X = NormalScale;
                 Scale = NormalScale;
                 transform.DOScale(new Vector2(Direct_x * Scale, Scale), 0.3f);
+                nowAnime = "NomarlPlayer";
                 BigMode = false;
             }
         }
