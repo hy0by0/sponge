@@ -320,10 +320,11 @@ public class PlayerController : MonoBehaviour
             Goal();
         }
 
-        if (collider.gameObject.tag == "Enemy")
+        if (collider.gameObject.tag == "Damage" || collider.gameObject.tag == "Fire")
         {
             Debug.Log("<color=red>“G‚É‚ ‚½‚Á‚½</color>");
-            Miss();
+            ChangeScale(false);
+            //Miss();
         }
     }
 
