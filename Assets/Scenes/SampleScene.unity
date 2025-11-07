@@ -221,6 +221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 144631068}
+  - component: {fileID: 144631069}
   - component: {fileID: 144631067}
   - component: {fileID: 144631066}
   m_Layer: 0
@@ -342,6 +343,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &144631069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144631065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e73dabfc412a534082538e0af9ab924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warpexit: {fileID: 1272780853}
 --- !u!1 &516192467
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,17 +391,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WaterBulletPrefab: {fileID: 1759159446448113438, guid: 5fa938c988e6f2344b812fd038c71b6a, type: 3}
   fire: 1
-  bulletSpeed: 6
+  bulletSpeed: 5.5
   intervalTime: 0.3
   time: 0
   BigMode: 0
   BigScale: 4
   NormalScale: 1
-  dashingForce: 24
+  dashingForce: 7
+  dashingForce_Vertical: 13
   dashingTime: 0.2
   dashCoolDown: 0.5
-  speed: 8
-  jumpForce: 14
+  speed: 6
+  jumpForce: 12
   direction: right
   jumpFlag: 0
   groundCheck: {fileID: 23203897}
@@ -419,7 +434,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &516192470
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1021,6 +1036,37 @@ Transform:
   - {fileID: 825948038}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1272780853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1272780854}
+  m_Layer: 0
+  m_Name: Exit1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1272780854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272780853}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.28, y: -1.91, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1030,3 +1076,4 @@ SceneRoots:
   - {fileID: 1126870090}
   - {fileID: 1117583962}
   - {fileID: 144631068}
+  - {fileID: 1272780854}

@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public float intervalTime = 0.3f; //再び水を吸えるまでの時間(水放出アニメーションの時間にしておく)
     public float time = 0;
 
+    bool UpMode = false;
+
     public bool BigMode = false;
     public float BigScale = 4.0f;
     public float NormalScale = 1.0f;
@@ -22,7 +24,8 @@ public class PlayerController : MonoBehaviour
     //public int DashCount = 1;
     bool canDash = true;
     bool isDashing = false;
-    [SerializeField] float dashingForce = 24f;
+    [SerializeField] float dashingForce = 14.0f;
+    [SerializeField] float dashingForce_Vertical = 5.0f;
     [SerializeField] float dashingTime = 0.2f;
     [SerializeField] float dashCoolDown = 1.0f;
 
@@ -60,6 +63,8 @@ public class PlayerController : MonoBehaviour
         Scale_X = this.transform.localScale.x;
         gameState = "playing";
         tr.emitting = false;
+        fire = 1;
+        UpMode = false;
     }
 
     // Update is called once per frame
@@ -78,13 +83,22 @@ public class PlayerController : MonoBehaviour
         axisX = Input.GetAxisRaw("Horizontal");
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             Jump();
         }
 
+        if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
+        {
+            UpMode = true;
+        }
+        else
+        {
+            UpMode = false;
+        }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+
+        if (Input.GetKeyDown(KeyCode.DownArrow) &&onGround)
         {
             if (BigMode)
             {
@@ -93,7 +107,7 @@ public class PlayerController : MonoBehaviour
                 {
                     GameObject WaterBullet = Instantiate(WaterBulletPrefab, transform.position, Quaternion.identity); //水弾生成
                     Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
-                    Vector2 bulletVec = new Vector2(bulletSpeed + axisX * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
+                    Vector2 bulletVec = new Vector2(bulletSpeed + fire * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
                     WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
                 }
 
@@ -101,31 +115,62 @@ public class PlayerController : MonoBehaviour
                 {
                     GameObject WaterBullet = Instantiate(WaterBulletPrefab, transform.position, Quaternion.identity); //水弾生成
                     Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
-                    Vector2 bulletVec = new Vector2(-bulletSpeed + axisX * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
+                    Vector2 bulletVec = new Vector2(-bulletSpeed - fire * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
                     WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
                 }
 
                 ChangeScale(false);
             }
 
-            else if (canDash)
-            {
-                StartCoroutine(Dash());//ダッシュのコルーチン開始
-            }
+            
 
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (BigMode && canDash)
+            {
+                SplashMode = true;
+                if (UpMode)
+                {
+                    StartCoroutine(Dash("Up"));//ダッシュのコルーチン開始
+                    for (int i = 0; i < 5; i++) //左方向へも水を放出させる
+                    {
+                        GameObject WaterBullet = Instantiate(WaterBulletPrefab, transform.position, Quaternion.identity); //水弾生成
+                        Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
+                        Vector2 bulletVec = new Vector2(0, -(bulletSpeed * 0.2f + speed * i * 0.3f)); //撃ちだすベクトルを決める
+                        WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
+                    }
+                }
+                else
+                {
+                    StartCoroutine(Dash("Horizontal"));//ダッシュのコルーチン開始
+                    for (int i = 0; i < 5; i++) //左方向へも水を放出させる
+                    {
+                        GameObject WaterBullet = Instantiate(WaterBulletPrefab, new Vector3(transform.position.x + fire * 0.1f * i, transform.position.y, transform.position.z), Quaternion.identity); //水弾生成
+                        Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
+                        Vector2 bulletVec = new Vector2(-fire * (bulletSpeed * 0.8f + 7.5f - i * 1.5f) , 0); //撃ちだすベクトルを決める
+                        WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
+                    }
+                }
+
+                    ChangeScale(false);
+            }
         }
 
 
 
-        if (axisX > 0)
+            if (axisX > 0)
         {
             this.transform.localScale = new Vector2(Scale_X, this.transform.localScale.y);
             direction = "right";
+            fire = 1;
         }
         else if (axisX < 0)
         {
             this.transform.localScale = new Vector2(-Scale_X, this.transform.localScale.y);
             direction = "left";
+            fire = -1;
         }
     }
 
@@ -183,14 +228,21 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private IEnumerator Dash()
+    private IEnumerator Dash(string direction)
     {
         canDash = false;
         isDashing = true;
 
         float originalGravity = rbody.gravityScale;//元の重力を代入
         rbody.gravityScale = 0;
-        rbody.velocity = new Vector2(transform.localScale.x * dashingForce, 0);//重力がない状態で向いてる方向にダッシュ
+        if (direction == "Up")
+        {
+            rbody.velocity = new Vector2(0, dashingForce_Vertical);//重力がない状態で向いてる方向にダッシュ
+        }
+        else
+        {
+            rbody.velocity = new Vector2(transform.localScale.x * dashingForce, 0);//重力がない状態で向いてる方向にダッシュ
+        }
         tr.emitting = true;
 
         yield return new WaitForSeconds(dashingTime);
