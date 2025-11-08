@@ -5,51 +5,61 @@ using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
-    public GameObject WaterBulletPrefab; // ここに水弾のプレハブを入れる
-    public int fire = 1;                //発射左右方向変数
-    public float bulletSpeed = 1f;    //弾発射スピード
-    bool SplashMode = false;
-    public float intervalTime = 0.3f; //再び水を吸えるまでの時間(水放出アニメーションの時間にしておく)
-    public float time = 0;
 
-    bool UpMode = false;
-
-    public bool BigMode = false;
-    public float BigScale = 4.0f;
-    public float NormalScale = 1.0f;
-    float Scale_X;
-    float Scale;
+    //Component用の変数  
+    Rigidbody2D rbody;
     BoxCollider2D boxCol;
 
-    //public int DashCount = 1;
-    bool canDash = true;
-    bool isDashing = false;
-    [SerializeField] float dashingForce = 14.0f;
-    [SerializeField] float dashingForce_Vertical = 5.0f;
+    [Header("オブジェクト、Prefabを入れる")]
+    public GameObject WaterBulletPrefab; // ここに水弾のプレハブを入れる
+    public GroundCheck groundCheck; //ここに地面感知用オブジェを入れる
+    [SerializeField] TrailRenderer tr; //ここに自身にAddしたTraiRendererを入れる（Startで取得しても良さそう）
+
+    [Header("基本動作のパラメータ")] 
+    public float speed = 6.0f;
+    public float jumpForce = 13.0f;
+
+    [Header("水巨大化のパラメータ")]
+    public float BigScale = 4.0f;
+    public float NormalScale = 1.0f;
+
+    [Header("水ダッシュのパラメータ")]
+    [SerializeField] float dashingForce = 7.0f; //左右の水ダッシュ
+    [SerializeField] float dashingForce_Vertical = 13.0f; //上方向への水ダッシュ
     [SerializeField] float dashingTime = 0.2f;
-    [SerializeField] float dashCoolDown = 1.0f;
+    [SerializeField] float dashCoolDown = 0.5f;
+    //public int DashCount = 1;
 
-    public float speed = 15.0f;
-    public float jumpForce = 10.0f;
-    float axisX = 0.0f;
-    public string direction = "right";
-    public bool jumpFlag = false;
+    [Header("水発射のパラメータ")]
+    public float bulletSpeed = 5.5f;    //弾発射スピード
+    public float intervalTime = 0.3f; //再び水を吸えるまでの時間(水放出アニメーションの時間にしておく)
+    public float time = 0; //水インターバルのカウント用変数
 
-    public GroundCheck groundCheck;
-    public bool onGround = false;
-
+    [Header("状態確認用")]   
     public static string gameState = "playing";
+    public bool onGround = false;
+    public bool jumpFlag = false;
+    bool UpMode = false;
+    public string direction = "right";
+    public bool BigMode = false;
+    public int fire = 1;                //発射左右方向変数
+    bool SplashMode = false;
+    bool canDash = true; //これは不必要かも？
+    bool isDashing = false;
+    float axisX = 0.0f;
 
 
+    [Header("アニメーション用")]
     public Animator animator;
     public string stopAnime = "NomarlPlayer";
     public string BigAnime = "BigPlayer";
     string nowAnime = "";
     string oldAnime = "";
 
-    [SerializeField] TrailRenderer tr;
+    //そのほか
+    float Scale_X;
+    float Scale; 
 
-    Rigidbody2D rbody;
 
     // Start is called before the first frame update
     void Start()
