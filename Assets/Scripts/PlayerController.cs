@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviour
             UpMode = false;
         }
 
-
+        //左右水まき散らし
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             if (BigMode)
@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
                 {
                     GameObject WaterBullet = Instantiate(WaterBulletPrefab, transform.position, Quaternion.identity); //水弾生成
                     Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
-                    Vector2 bulletVec = new Vector2(bulletSpeed + fire * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
+                    Vector2 bulletVec = new Vector2(fire * (bulletSpeed + speed * 0.5f), 2 + i); //撃ちだすベクトルを決める
                     WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
                 }
 
@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviour
                 {
                     GameObject WaterBullet = Instantiate(WaterBulletPrefab, transform.position, Quaternion.identity); //水弾生成
                     Rigidbody2D WaterRbody = WaterBullet.GetComponent<Rigidbody2D>(); //水のrbody取得
-                    Vector2 bulletVec = new Vector2(-bulletSpeed - fire * speed * 0.5f, 2 + i); //撃ちだすベクトルを決める
+                    Vector2 bulletVec = new Vector2(-fire * (bulletSpeed + speed * 0.5f), 2 + i); //撃ちだすベクトルを決める
                     WaterRbody.AddForce(bulletVec, ForceMode2D.Impulse); //決めたベクトル方向へ撃ちだす
                 }
 
