@@ -15,8 +15,10 @@ public class PlayerController : MonoBehaviour
     public GroundCheck groundCheck; //ここに地面感知用オブジェを入れる
     [SerializeField] TrailRenderer tr; //ここに自身にAddしたTraiRendererを入れる（Startで取得しても良さそう）
 
-    [Header("基本動作のパラメータ")] 
+    [Header("基本動作のパラメータ")]
+    [Tooltip("プレイヤー移動速度")]
     public float speed = 6.0f;
+    [Tooltip("プレイヤージャンプ力")]
     public float jumpForce = 13.0f;
 
     [Header("水巨大化のパラメータ")]
@@ -24,8 +26,11 @@ public class PlayerController : MonoBehaviour
     public float NormalScale = 1.0f;
 
     [Header("水ダッシュのパラメータ")]
+    [Tooltip("左右ダッシュ力")]
     [SerializeField] float dashingForce = 7.0f; //左右の水ダッシュ
+    [Tooltip("上ダッシュ力")]
     [SerializeField] float dashingForce_Vertical = 13.0f; //上方向への水ダッシュ
+    [Tooltip("ダッシュ時間")]
     [SerializeField] float dashingTime = 0.2f;
     [SerializeField] float dashCoolDown = 0.5f;
     //public int DashCount = 1;
@@ -40,11 +45,14 @@ public class PlayerController : MonoBehaviour
     public bool onGround = false;
     public bool jumpFlag = false;
     bool UpMode = false;
+    [Tooltip("プレイヤー方向")]
     public string direction = "right";
     public bool BigMode = false;
+    [Tooltip("プレイヤー方向値")]
     public int fire = 1;                //発射左右方向変数
     bool SplashMode = false;
     bool canDash = true; //これは不必要かも？
+    [Tooltip("ダッシュ中かどうか")]
     bool isDashing = false;
     float axisX = 0.0f;
 
