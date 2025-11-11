@@ -37,8 +37,10 @@ public class PlayerController : MonoBehaviour
 
     [Header("水発射のパラメータ")]
     public float bulletSpeed = 5.5f;    //弾発射スピード
+    [Tooltip("水発射中の時間")]
     public float intervalTime = 0.3f; //再び水を吸えるまでの時間(水放出アニメーションの時間にしておく)
-    public float time = 0; //水インターバルのカウント用変数
+    [Tooltip("水噴射中の時間カウント用変数")]
+    public float time_Count_splash = 0; //水インターバルのカウント用変数
 
     [Header("状態確認用")]   
     public static string gameState = "playing";
@@ -140,10 +142,10 @@ public class PlayerController : MonoBehaviour
                 ChangeScale(false);
             }
 
-            
-
         }
 
+
+        // 水ダッシュ
         if (Input.GetKeyDown(KeyCode.X))
         {
             if (BigMode && canDash)
@@ -176,9 +178,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-
-
-            if (axisX > 0)
+        if (axisX > 0)
         {
             this.transform.localScale = new Vector2(Scale_X, this.transform.localScale.y);
             direction = "right";
@@ -190,7 +190,10 @@ public class PlayerController : MonoBehaviour
             direction = "left";
             fire = -1;
         }
+
     }
+
+
 
     void FixedUpdate()
     {
@@ -204,19 +207,23 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        //水噴射中の処理。水噴射の終わりのフラグ切り替え処理
         if (SplashMode)
         {
-            if (time < intervalTime)
+            //水噴射中、噴射アニメーションが終わってから噴射フラグをfalseに切り替え
+
+            if (time_Count_splash < intervalTime)
             {
-                time += Time.deltaTime;
+                time_Count_splash += Time.deltaTime;
             }
             else
             {
-                time = 0;
+                time_Count_splash = 0;
                 SplashMode = false;
             }
         }
 
+        //地面感知フラグを確認
         onGround = groundCheck.IsGround();
 
         if (jumpFlag)
@@ -226,16 +233,20 @@ public class PlayerController : MonoBehaviour
             jumpFlag = false;
         }
 
+        //移動の速度反映
         rbody.velocity = new Vector2(axisX * speed, rbody.velocity.y);
 
-        if (nowAnime != oldAnime) // アニメーションの変更を反映(ミスとクリア以外)
+        // アニメーションの変更を反映(ミスとクリア以外)
+        if (nowAnime != oldAnime) 
         {
             oldAnime = nowAnime;
-        animator.Play(nowAnime);
+            animator.Play(nowAnime);
         }
+
     }
 
 
+    //ジャンプフラグ確認処理
     public void Jump()
     {
         if (onGround)
@@ -245,7 +256,8 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
+    
+    //ダッシュ実行処理
     private IEnumerator Dash(string direction)
     {
         canDash = false;
@@ -276,11 +288,14 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    //水に触れた時の処理
     public void InWater()
     {
         ChangeScale(true);
     }
 
+
+    //サイズ変化ギミック処理
     public void ChangeScale(bool bigflag)
     {
         if (bigflag)
@@ -326,6 +341,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    //衝突処理
     private void OnTriggerEnter2D(Collider2D collider)
     {
         //if (collider.gameObject.tag == "Water")
